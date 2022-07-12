@@ -1,0 +1,4 @@
+prisma/sqllite.db
+node_modules/
+.vscode
+logs/*.txt

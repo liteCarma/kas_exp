@@ -1,0 +1,30 @@
+{
+  "name": "backend-kazan-express",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/server.js",
+  "scripts": {
+    "dev": "nodemon src/server.js",
+    "start": "node src/server.js",
+    "install": "npx prisma generate & prisma db push",
+    "dbGUI": "npx prisma studio"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@prisma/client": "^4.0.0",
+    "cookie-parser": "^1.4.6",
+    "dotenv": "^16.0.1",
+    "express": "^4.18.1",
+    "got": "^12.1.0",
+    "pino": "^8.1.0",
+    "pino-pretty": "^8.1.0"
+  },
+  "devDependencies": {
+    "hpagent": "^1.0.0",
+    "nodemon": "^2.0.19",
+    "prisma": "^4.0.0"
+  },
+  "type": "module"
+}
