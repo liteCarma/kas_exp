@@ -6,9 +6,13 @@ services:
     container_name: kazanexpress
     ports:
       - 9000:9000
+    volumes:
+      - kazanexpress-data:/app
     environment:
       - PORT=9000
         # @userinfobot - id пользователя, которму будут приходить уведомления
       - TG_USERID=
         # @BotFather - создать бота и прописать его api token
       - TG_TOKEN=
+volumes:
+  kazanexpress-data:
