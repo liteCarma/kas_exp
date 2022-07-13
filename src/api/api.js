@@ -1,5 +1,31 @@
-import req from './requiest.js'
+import gotInstace from './requiest.js'
 import { ApiError , ApiErrorInternalServerError } from './errors.js'
+import { defaultHeaders } from './constants.js';
+
+const req = gotInstace.extend({
+  prefixUrl: 'https://api.business.kazanexpress.ru/api',
+  responseType: 'json',
+  headers: {
+   ...defaultHeaders
+  },
+  retry: {
+    limit: 5,
+  },
+  hooks: {
+    beforeError: [
+      error => {
+				const {response} = error;
+				if (response && response.body && response.body.errors) {
+					error.message = response.body.errors[0].message
+				}
+
+				return error;
+			}
+    ]
+  },
+  timeout: { request: 60000 },
+  throwHttpErrors: true,
+})
 
 export const signIn = async (username, password) => {
   const response = await req.post('oauth/token', {
@@ -130,7 +156,6 @@ export const setTimeSlots = async (accessToken, shopId, slot) => {
 
   return response.body.payload[0]
 }
-
 
 const hasErros = ({ statusCode, body }) => statusCode !== 200 || body.error
 

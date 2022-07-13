@@ -3,6 +3,7 @@ import { RequestError } from 'got'
 import { User } from '../models/user.js'
 import { ApiError, ApiErrorInternalServerError } from '../api/errors.js'
 import appGlobal from '../appGlobal.js'
+import { notifyToTG } from '../api/notify.js'
 
 const { log } = appGlobal
 
@@ -89,6 +90,16 @@ const setFreeSlot = async (user, invoices) => {
     date: timeFrom
   })
   invoices.splice(0, 1)
+
+  if (process.env.TG_USERID && process.env.TG_TOKEN) {
+    notifyToTG(
+      {
+        token: process.env.TG_TOKEN,
+        chatId: process.env.TG_USERID
+      },
+      `получен слот для накладной №${slot.invoiceNumber} на дату ${new Date(slot.timeSlotReservation.timeFrom).toLocaleDateString()}`
+    )
+  }
 }
 
 const timeSlotsErrorHandler = async (user, error) => {

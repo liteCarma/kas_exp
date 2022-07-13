@@ -5,6 +5,8 @@ import appGlobal from './appGlobal.js'
 import { apiRouter } from './routes/apiRouter.js'
 import { errorHandler } from './middlewares/errors.js'
 import * as dotenv from 'dotenv'
+import { notifyToTG } from './api/notify.js'
+
 dotenv.config()
 
 const { log, cfg } = appGlobal
@@ -28,5 +30,15 @@ const host = process.env.HOST || cfg.host
 const port = process.env.PORT || cfg.port
 
 app.listen(port, host, () => {
-  log.info(`server is runing, local url: http://localhost:${port}/${cfg.secretPath}`)
+  const text = `server is runing, local url: http://localhost:${port}/${cfg.secretPath}`
+  log.info(text)
+
+  if (process.env.TG_USERID && process.env.TG_TOKEN) {
+    notifyToTG({
+      token: process.env.TG_TOKEN,
+      chatId: process.env.TG_USERID
+    },
+    text
+    )
+  }
 })
