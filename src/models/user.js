@@ -34,7 +34,7 @@ export const User = class User {
 
     const user = new User(username)
     user.tokens = {
-      created: userDataFromBD.tokenDateCreated,
+      tokenDateCreated: userDataFromBD.tokenDateCreated,
       accessToken: userDataFromBD.accessToken,
       refreshToken: userDataFromBD.refreshToken
     }

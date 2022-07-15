@@ -55,40 +55,44 @@ export const refreshToken = async (refreshToken) => {
 }
 
 export const checkToken = async (accessToken) => {
-  const response = await req.post('auth/seller/check_token', {
-    headers: {
-      'Authorization': 'Basic a2F6YW5leHByZXNzOnNlY3JldEtleQ==',
-      'Content-Type': 'application/x-www-form-urlencoded',
-    },
-    body: encodeURI(`token=${accessToken}`)
-  })
+  let active = false
+  try {
+    const response = await req.post('auth/seller/check_token', {
+      headers: {
+        'Authorization': 'Basic a2F6YW5leHByZXNzOnNlY3JldEtleQ==',
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: encodeURI(`token=${accessToken}`)
+    })
+  
+    throwErrorIfHasErrors(response)
+    active = response.body.active 
+  } catch {}
 
-  throwErrorIfHasErrors(response)
-  return response.body.active 
+  return active 
 }
 
 export const checkAndRefreshToken = async (tokens) => {
   let isActiveToken = false
-  let result = {
+  let actualTokens = {
     tokens: {...tokens},
     refreshed: false
   }
-  const dateTokenExpiration = new Date(parseInt(tokens.created, 10))
+  const dateTokenExpiration = new Date(parseInt(tokens.tokenDateCreated, 10))
   dateTokenExpiration.setDate(dateTokenExpiration.getDate() + 1)
 
 
   if (new Date() < dateTokenExpiration) {
     isActiveToken = await checkToken(tokens.accessToken)
   }
-  
 
   if (!isActiveToken) {
     const result = await refreshToken(tokens.refreshToken)
-    result.tokens = result
-    result.refreshed = true
+    actualTokens.tokens = result
+    actualTokens.refreshed = true
   }
 
-  return result
+  return actualTokens
 }
 
 export const getShopId =  async (accessToken) => {
